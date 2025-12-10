@@ -1,8 +1,9 @@
 // src/App.tsx
 import { useEffect, useState } from "react";
+import { TeamList, type TeamInfo } from "./components/TeamList";
 
 // ✅ Use the same league ID you used yesterday
-const LEAGUE_ID = "1257481742223163392"; // <-- replace this
+const LEAGUE_ID = "1257481742223163392"; // <-- make sure this is set
 
 // ---- Types ----
 interface League {
@@ -20,33 +21,6 @@ interface SleeperRoster {
   roster_id: number;
   owner_id: string | null;
 }
-
-interface TeamInfo {
-  rosterId: number;
-  ownerName: string;
-}
-
-// ---- Components ----
-
-type TeamListProps = {
-  teams: TeamInfo[];
-};
-
-const TeamList: React.FC<TeamListProps> = ({ teams }) => {
-  if (teams.length === 0) {
-    return <p>No teams found.</p>;
-  }
-
-  return (
-    <ul>
-      {teams.map((team) => (
-        <li key={team.rosterId}>
-          <strong>Team #{team.rosterId}</strong> — Owner: {team.ownerName}
-        </li>
-      ))}
-    </ul>
-  );
-};
 
 function App() {
   const [league, setLeague] = useState<League | null>(null);
