@@ -71,16 +71,17 @@ async function getLeagueHistoryFromCurrent(
   let leagueId: string | null = currentLeagueId;
 
   while (leagueId) {
-    const league = await fetchJSON<SleeperLeague>(
+    // ✅ Rename local variable to avoid collisions with any outer `league` variables
+    const fetchedLeague: SleeperLeague = await fetchJSON<SleeperLeague>(
       `https://api.sleeper.app/v1/league/${leagueId}`
     );
 
-    const seasonNum = Number(league.season);
+    const seasonNum = Number(fetchedLeague.season);
     if (!Number.isFinite(seasonNum)) break;
     if (seasonNum < startSeason) break;
 
-    out.push({ leagueId: league.league_id, season: seasonNum });
-    leagueId = league.previous_league_id;
+    out.push({ leagueId: fetchedLeague.league_id, season: seasonNum });
+    leagueId = fetchedLeague.previous_league_id;
   }
 
   return out.sort((a, b) => a.season - b.season);
@@ -270,7 +271,16 @@ function upsertOpponentRow(
 function computeVsAllFromWeek(
   matchups: SleeperMatchup[],
   targetRosterId: number
-): { opponentRosterId: number; games: number; wins: number; losses: number; ties: number; ptsFor: number; ptsAgainst: number; diff: number }[] {
+): {
+  opponentRosterId: number;
+  games: number;
+  wins: number;
+  losses: number;
+  ties: number;
+  ptsFor: number;
+  ptsAgainst: number;
+  diff: number;
+}[] {
   // Group by matchup_id (each matchup_id is one “game” between two rosters)
   const byMatchup = new Map<number, SleeperMatchup[]>();
   for (const m of matchups) {
