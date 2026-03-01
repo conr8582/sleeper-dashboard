@@ -1,19 +1,6 @@
 // src/components/MatchupList.tsx
 import React from "react";
-
-// Local copies of the types we care about.
-// We DON'T import from App.tsx to avoid circular dependencies.
-
-interface SleeperMatchup {
-  matchup_id: number | null;
-  roster_id: number;
-  points: number;
-}
-
-interface TeamInfo {
-  rosterId: number;
-  ownerName: string;
-}
+import { type SleeperMatchup, type TeamInfo } from "../lib/sleeper";
 
 type MatchupRow = {
   rosterId: number;

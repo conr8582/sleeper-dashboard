@@ -1,20 +1,12 @@
 import { useMemo, useState } from "react";
 import { useTeams } from "../hooks/useTeams";
-
-const CURRENT_LEAGUE_ID = "1257481742223163392";
-const START_SEASON = 2023;
-
-type SleeperLeague = {
-  league_id: string;
-  season: string; // "2025"
-  previous_league_id: string | null;
-};
-
-type SleeperMatchup = {
-  matchup_id: number | null;
-  roster_id: number;
-  points: number;
-};
+import {
+  LEAGUE_ID,
+  START_SEASON,
+  fetchJSON,
+  getLeagueHistoryFromCurrent,
+  type SleeperMatchup,
+} from "../lib/sleeper";
 
 type SeasonBreakdown = {
   season: number;
@@ -56,36 +48,6 @@ type VsAllResult = {
   rows: OpponentRow[];
 };
 
-async function fetchJSON<T>(url: string): Promise<T> {
-  const res = await fetch(url);
-  if (!res.ok) throw new Error(`Request failed (${res.status}) for ${url}`);
-  return res.json();
-}
-
-async function getLeagueHistoryFromCurrent(
-  currentLeagueId: string,
-  startSeason: number
-): Promise<{ leagueId: string; season: number }[]> {
-  const out: { leagueId: string; season: number }[] = [];
-
-  let leagueId: string | null = currentLeagueId;
-
-  while (leagueId) {
-    // ✅ Rename local variable to avoid collisions with any outer `league` variables
-    const fetchedLeague: SleeperLeague = await fetchJSON<SleeperLeague>(
-      `https://api.sleeper.app/v1/league/${leagueId}`
-    );
-
-    const seasonNum = Number(fetchedLeague.season);
-    if (!Number.isFinite(seasonNum)) break;
-    if (seasonNum < startSeason) break;
-
-    out.push({ leagueId: fetchedLeague.league_id, season: seasonNum });
-    leagueId = fetchedLeague.previous_league_id;
-  }
-
-  return out.sort((a, b) => a.season - b.season);
-}
 
 function computeFromMatchups(
   matchups: SleeperMatchup[],
@@ -174,7 +136,7 @@ function addSeasonRow(
 }
 
 async function compareHeadToHead(rosterA: number, rosterB: number): Promise<CompareResult> {
-  const leagues = await getLeagueHistoryFromCurrent(CURRENT_LEAGUE_ID, START_SEASON);
+  const leagues = await getLeagueHistoryFromCurrent(LEAGUE_ID, START_SEASON);
 
   let games = 0;
   let teamAWins = 0;
@@ -336,7 +298,7 @@ function computeVsAllFromWeek(
 }
 
 async function compareVsAll(targetRosterId: number): Promise<VsAllResult> {
-  const leagues = await getLeagueHistoryFromCurrent(CURRENT_LEAGUE_ID, START_SEASON);
+  const leagues = await getLeagueHistoryFromCurrent(LEAGUE_ID, START_SEASON);
   const seasonsCovered = leagues.map((l) => l.season);
 
   const opponentMap = new Map<number, OpponentRow>();

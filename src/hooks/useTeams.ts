@@ -1,17 +1,17 @@
 import { useEffect, useState } from "react";
-import type { TeamInfo } from "../components/TeamList";
+import {
+  LEAGUE_ID,
+  fetchJSON,
+  type SleeperUser,
+  type SleeperRoster,
+  type TeamInfo,
+} from "../lib/sleeper";
 
-const LEAGUE_ID = "1257481742223163392";
-
-type SleeperUser = {
-  user_id: string;
-  display_name: string;
-};
-
-type SleeperRoster = {
-  roster_id: number;
-  owner_id: string | null;
-};
+function cleanName(value: unknown): string | null {
+  if (typeof value !== "string") return null;
+  const trimmed = value.trim();
+  return trimmed.length ? trimmed : null;
+}
 
 export function useTeams() {
   const [teams, setTeams] = useState<TeamInfo[]>([]);
@@ -24,30 +24,31 @@ export function useTeams() {
         setLoading(true);
         setError(null);
 
-        const [usersRes, rostersRes] = await Promise.all([
-          fetch(`https://api.sleeper.app/v1/league/${LEAGUE_ID}/users`),
-          fetch(`https://api.sleeper.app/v1/league/${LEAGUE_ID}/rosters`),
+        const [users, rosters] = await Promise.all([
+          fetchJSON<SleeperUser[]>(`https://api.sleeper.app/v1/league/${LEAGUE_ID}/users`),
+          fetchJSON<SleeperRoster[]>(`https://api.sleeper.app/v1/league/${LEAGUE_ID}/rosters`),
         ]);
-
-        if (!usersRes.ok) {
-          throw new Error(`Users request failed: ${usersRes.status}`);
-        }
-        if (!rostersRes.ok) {
-          throw new Error(`Rosters request failed: ${rostersRes.status}`);
-        }
-
-        const users: SleeperUser[] = await usersRes.json();
-        const rosters: SleeperRoster[] = await rostersRes.json();
 
         const joined: TeamInfo[] = rosters.map((r) => {
           const owner = users.find((u) => u.user_id === r.owner_id);
 
+          const teamName =
+            cleanName(r.metadata?.team_name) ||
+            cleanName(owner?.metadata?.team_name) ||
+            cleanName(owner?.display_name) ||
+            `Team #${r.roster_id}`;
+
+          const avatarId = r.metadata?.avatar ?? owner?.avatar ?? null;
+
           return {
             rosterId: r.roster_id,
+            teamName,
             ownerName: owner?.display_name ?? "Unknown owner",
+            avatarId,
           };
         });
 
+        joined.sort((a, b) => a.rosterId - b.rosterId);
         setTeams(joined);
       } catch (err) {
         setError(err instanceof Error ? err.message : "Unknown error");
