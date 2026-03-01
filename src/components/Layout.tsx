@@ -1,4 +1,4 @@
-import { Outlet } from "react-router-dom";
+import { Outlet, Link } from "react-router-dom";
 import { Nav } from "./Nav";
 
 export function Layout() {
@@ -9,9 +9,20 @@ export function Layout() {
           display: "flex",
           justifyContent: "space-between",
           alignItems: "center",
+          gap: 16,
         }}
       >
-        <div style={{ fontWeight: 800 }}>Crumpin</div>
+        <Link
+          to="/"
+          style={{
+            fontWeight: 800,
+            textDecoration: "none",
+            color: "inherit",
+          }}
+        >
+          Crumpin
+        </Link>
+
         <Nav />
       </header>
 

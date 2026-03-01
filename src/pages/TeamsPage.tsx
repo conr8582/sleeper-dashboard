@@ -9,6 +9,11 @@ export function TeamsPage() {
 
   return (
     <div style={{ marginTop: 16 }}>
+      <h1 style={{ marginTop: 0, marginBottom: 8 }}>Teams</h1>
+      <div style={{ opacity: 0.7, marginBottom: 12 }}>
+        Click a team to view details.
+      </div>
+
       <TeamList teams={teams} />
     </div>
   );
