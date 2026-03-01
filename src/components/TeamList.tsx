@@ -7,23 +7,24 @@ export type { TeamInfo };
 
 type TeamListProps = {
   teams: TeamInfo[];
+  allTimeRecords?: Record<number, { wins: number; losses: number }>;
 };
 
-export const TeamList: React.FC<TeamListProps> = ({ teams }) => {
+export const TeamList: React.FC<TeamListProps> = ({ teams, allTimeRecords }) => {
   if (teams.length === 0) return <p>No teams found.</p>;
 
   return (
     <div
       style={{
         display: "grid",
-        gridTemplateColumns: "repeat(auto-fill, minmax(220px, 1fr))",
-        gap: 14,
-        marginTop: 12,
+        gridTemplateColumns: "repeat(auto-fill, minmax(260px, 1fr))",
+        gap: 12,
       }}
     >
       {teams.map((team) => {
         const slug = slugifyTeamName(team.teamName);
         const teamKey = `${team.rosterId}-${slug}`;
+        const record = allTimeRecords?.[team.rosterId];
 
         return (
           <Link
@@ -32,20 +33,29 @@ export const TeamList: React.FC<TeamListProps> = ({ teams }) => {
             style={{
               display: "flex",
               alignItems: "center",
-              gap: 12,
-              padding: 14,
-              borderRadius: 14,
-              border: "1px solid rgba(0,0,0,0.08)",
+              gap: 14,
+              padding: "14px 16px",
+              borderRadius: 12,
+              border: "1px solid var(--cr-border)",
               textDecoration: "none",
-              color: "inherit",
-              background: "rgba(255,255,255,0.02)",
+              color: "var(--cr-text)",
+              background: "var(--cr-surface)",
+              transition: "box-shadow 0.15s ease, transform 0.15s ease",
+            }}
+            onMouseEnter={(e) => {
+              (e.currentTarget as HTMLElement).style.boxShadow = "0 4px 16px rgba(0,0,0,0.08)";
+              (e.currentTarget as HTMLElement).style.transform = "translateY(-2px)";
+            }}
+            onMouseLeave={(e) => {
+              (e.currentTarget as HTMLElement).style.boxShadow = "none";
+              (e.currentTarget as HTMLElement).style.transform = "none";
             }}
           >
             <div
               style={{
-                width: 44,
-                height: 44,
-                borderRadius: 12,
+                width: 48,
+                height: 48,
+                borderRadius: "50%",
                 overflow: "hidden",
                 background: "rgba(0,0,0,0.06)",
                 display: "grid",
@@ -62,18 +72,18 @@ export const TeamList: React.FC<TeamListProps> = ({ teams }) => {
                   loading="lazy"
                 />
               ) : (
-                <span style={{ fontWeight: 800, opacity: 0.7 }}>
+                <span style={{ fontWeight: 800, fontSize: 18 }}>
                   {team.teamName.slice(0, 1).toUpperCase()}
                 </span>
               )}
             </div>
 
-            <div style={{ minWidth: 0 }}>
+            <div style={{ flex: 1, minWidth: 0 }}>
               <div
                 style={{
                   fontWeight: 800,
-                  fontSize: 16,
-                  lineHeight: 1.15,
+                  fontSize: 15,
+                  lineHeight: 1.2,
                   overflow: "hidden",
                   textOverflow: "ellipsis",
                   whiteSpace: "nowrap",
@@ -82,10 +92,17 @@ export const TeamList: React.FC<TeamListProps> = ({ teams }) => {
               >
                 {team.teamName}
               </div>
-              <div style={{ fontSize: 13, opacity: 0.65, marginTop: 4 }}>
-                View team →
+              <div style={{ fontSize: 13, color: "var(--cr-text-muted)", marginTop: 3 }}>
+                {team.ownerName}
               </div>
+              {record && (
+                <div style={{ fontSize: 12, color: "var(--cr-text-muted)", marginTop: 2 }}>
+                  {record.wins}-{record.losses} · all-time
+                </div>
+              )}
             </div>
+
+            <span style={{ color: "var(--cr-text-muted)", fontSize: 18, flexShrink: 0 }}>→</span>
           </Link>
         );
       })}

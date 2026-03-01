@@ -3,30 +3,45 @@ import { Nav } from "./Nav";
 
 export function Layout() {
   return (
-    <div style={{ maxWidth: 980, margin: "0 auto", padding: 16 }}>
+    <div style={{ minHeight: "100vh", background: "var(--cr-bg)" }}>
       <header
         style={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          gap: 16,
+          background: "var(--cr-header-bg)",
+          borderBottom: "2px solid var(--cr-red)",
+          color: "var(--cr-header-text)",
         }}
       >
-        <Link
-          to="/"
+        <div
           style={{
-            fontWeight: 800,
-            textDecoration: "none",
-            color: "inherit",
+            maxWidth: 1024,
+            margin: "0 auto",
+            padding: "0 20px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "center",
+            height: 56,
+            gap: 16,
           }}
         >
-          Crumpin
-        </Link>
+          <Link
+            to="/"
+            style={{
+              fontWeight: 900,
+              fontSize: 20,
+              textDecoration: "none",
+              letterSpacing: "0.01em",
+              flexShrink: 0,
+            }}
+          >
+            <span style={{ color: "var(--cr-red)" }}>CRUM</span>
+            <span style={{ color: "var(--cr-blue)" }}>PIN</span>
+          </Link>
 
-        <Nav />
+          <Nav />
+        </div>
       </header>
 
-      <main style={{ marginTop: 16 }}>
+      <main style={{ maxWidth: 1024, margin: "0 auto", padding: "24px 20px" }}>
         <Outlet />
       </main>
     </div>

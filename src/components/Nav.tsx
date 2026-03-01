@@ -1,28 +1,21 @@
 import React from "react";
 import { NavLink } from "react-router-dom";
 
-const baseLinkStyle: React.CSSProperties = {
-  padding: "8px 10px",
-  borderRadius: 8,
-  textDecoration: "none",
-};
-
 function linkStyle(isActive: boolean): React.CSSProperties {
   return {
-    ...baseLinkStyle,
+    padding: "4px 0",
+    textDecoration: "none",
+    color: "var(--cr-header-text)",
     fontWeight: isActive ? 700 : 500,
-    background: isActive ? "#eee" : "transparent",
-    color: "inherit",
+    fontSize: 14,
+    borderBottom: isActive ? "2px solid var(--cr-red)" : "2px solid transparent",
+    whiteSpace: "nowrap",
   };
 }
 
 export function Nav() {
   return (
-    <nav style={{ display: "flex", gap: 8, alignItems: "center", flexWrap: "wrap" }}>
-      <NavLink to="/" end style={({ isActive }) => linkStyle(isActive)}>
-        Home
-      </NavLink>
-
+    <nav style={{ display: "flex", gap: 20, alignItems: "center", flexWrap: "wrap" }}>
       <NavLink to="/teams" style={({ isActive }) => linkStyle(isActive)}>
         Teams
       </NavLink>
@@ -31,14 +24,16 @@ export function Nav() {
         Seasons
       </NavLink>
 
-      <NavLink to="/weeks" style={({ isActive }) => linkStyle(isActive)}>
-        Weeks
+      <NavLink to="/stats" style={({ isActive }) => linkStyle(isActive)}>
+        Stats
       </NavLink>
 
-      <span style={{ opacity: 0.35, margin: "0 4px" }}>|</span>
+      <NavLink to="/awards" style={({ isActive }) => linkStyle(isActive)}>
+        Awards
+      </NavLink>
 
       <NavLink to="/matchup-calculator" style={({ isActive }) => linkStyle(isActive)}>
-        Matchup Calculator
+        Matchup Calc
       </NavLink>
     </nav>
   );

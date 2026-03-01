@@ -1,3 +1,16 @@
+/* ===== Design tokens ===== */
+:root {
+  --cr-bg: #ffffff;
+  --cr-surface: #f5f7fa;
+  --cr-border: rgba(0, 0, 0, 0.08);
+  --cr-text: #111827;
+  --cr-text-muted: rgba(17, 24, 39, 0.55);
+  --cr-red: #dc2626;
+  --cr-blue: #2563eb;
+  --cr-header-bg: #12121e;
+  --cr-header-text: #ffffff;
+}
+
 /* ===== Global reset & base styles ===== */
 * {
   box-sizing: border-box;
@@ -11,10 +24,6 @@ body,
   padding: 0;
 }
 
-/* IMPORTANT:
-   Do NOT center the body.
-   Let React layouts control positioning.
-*/
 body {
   font-family: "Inter", system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI",
     sans-serif;
@@ -23,9 +32,8 @@ body {
 
   min-width: 320px;
 
-  /* Neutral global defaults (pages can override) */
-  color: #111827;
-  background-color: #ffffff;
+  color: var(--cr-text);
+  background-color: var(--cr-bg);
 
   font-synthesis: none;
   text-rendering: optimizeLegibility;

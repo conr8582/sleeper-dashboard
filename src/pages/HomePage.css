@@ -1,59 +1,237 @@
 /* ===== Home Page ===== */
 
-.home {
-    min-height: 100vh;
-    display: grid;
-    place-items: center;
-    padding: 64px 24px;
-    text-align: center;
-    background-color: #ffffff;
-  }
-  
-  /* Title: outlined, lowercase, formal */
-  .home-title {
-    font-size: 64px;
-    font-weight: 600; /* calmer, more formal */
-    margin: 0;
-  
-    text-transform: lowercase;
-    letter-spacing: 0.05em;
-  
-    /* Outline-only text */
-    color: #ffffff;
-    -webkit-text-stroke: .01px #111111;
-  
-    /* Firefox fallback */
-    text-shadow:
-      1px 0 0 #111111,
-     -1px 0 0 #111111,
-      0 1px 0 #111111,
-      0 -1px 0 #111111;
-  }
-  
-  /* Nav container */
-  .home-nav {
-    margin-top: 32px;
-    display: flex;
-    gap: 28px;
-    justify-content: center;
-    align-items: center;
-    flex-wrap: wrap;
-  }
-  
-  /* Nav links: understated, editorial */
-  .home-link {
-    font-size: 18px;
-    font-weight: 500;
-    letter-spacing: 0.04em;
-  
-    color: #111827;
-    opacity: 0.8;
-  
-    transition: opacity 0.15s ease, transform 0.15s ease;
-  }
-  
-  .home-link:hover {
-    opacity: 1;
-    transform: translateY(-1px);
-  }
-  
+/* Hero */
+.home-hero {
+  text-align: center;
+  padding: 56px 24px 40px;
+  border-bottom: 1px solid var(--cr-border);
+}
+
+.home-hero-emoji {
+  font-size: 48px;
+  line-height: 1;
+  margin-bottom: 12px;
+}
+
+.home-hero-title {
+  font-size: clamp(52px, 10vw, 88px);
+  font-weight: 900;
+  letter-spacing: -0.02em;
+  line-height: 1;
+  margin: 0 0 12px;
+}
+
+.home-hero-crum {
+  color: var(--cr-red);
+}
+
+.home-hero-pin {
+  color: var(--cr-blue);
+}
+
+.home-hero-sub {
+  margin: 0 0 20px;
+  font-size: 16px;
+  color: var(--cr-text-muted);
+  font-weight: 500;
+  letter-spacing: 0.02em;
+}
+
+.home-hero-bar {
+  width: 120px;
+  height: 4px;
+  margin: 0 auto;
+  background: linear-gradient(to right, var(--cr-red), var(--cr-blue));
+  border-radius: 2px;
+}
+
+/* Nav cards row */
+.home-cards {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(160px, 1fr));
+  gap: 12px;
+  padding: 28px 0;
+  border-bottom: 1px solid var(--cr-border);
+}
+
+.home-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 6px;
+  padding: 20px 12px;
+  background: var(--cr-surface);
+  border: 1px solid var(--cr-border);
+  border-radius: 12px;
+  text-decoration: none;
+  color: var(--cr-text);
+  transition: box-shadow 0.15s ease, transform 0.15s ease;
+  text-align: center;
+}
+
+.home-card:hover {
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.08);
+  transform: translateY(-2px);
+  text-decoration: none;
+}
+
+.home-card-icon {
+  font-size: 28px;
+  line-height: 1;
+}
+
+.home-card-label {
+  font-weight: 700;
+  font-size: 14px;
+}
+
+.home-card-desc {
+  font-size: 12px;
+  color: var(--cr-text-muted);
+}
+
+/* Sections */
+.home-section {
+  padding: 28px 0;
+  border-bottom: 1px solid var(--cr-border);
+}
+
+.home-section:last-child {
+  border-bottom: none;
+}
+
+.home-section-title {
+  font-size: 22px;
+  font-weight: 800;
+  margin: 0 0 16px;
+}
+
+/* Power Rankings */
+.home-rankings {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.home-rank-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: var(--cr-surface);
+  border: 1px solid var(--cr-border);
+  border-radius: 10px;
+}
+
+.home-rank-badge {
+  width: 24px;
+  height: 24px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 800;
+  font-size: 13px;
+  color: var(--cr-red);
+  flex-shrink: 0;
+}
+
+.home-rank-avatar {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  overflow: hidden;
+  background: var(--cr-border);
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+}
+
+.home-rank-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+.home-rank-avatar span {
+  font-weight: 800;
+  font-size: 14px;
+}
+
+.home-rank-info {
+  flex: 1;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.home-rank-name {
+  font-weight: 700;
+  font-size: 14px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.home-rank-owner {
+  font-size: 12px;
+  color: var(--cr-text-muted);
+}
+
+.home-rank-record {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cr-blue);
+  flex-shrink: 0;
+}
+
+.home-rank-pf {
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cr-text-muted);
+  flex-shrink: 0;
+  width: 48px;
+  text-align: right;
+}
+
+.home-link-more {
+  display: inline-block;
+  margin-top: 12px;
+  font-size: 13px;
+  font-weight: 600;
+  color: var(--cr-blue);
+  text-decoration: none;
+}
+
+.home-link-more:hover {
+  text-decoration: underline;
+}
+
+/* Champions */
+.home-champs {
+  display: flex;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.home-champ-card {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+  padding: 16px 20px;
+  background: var(--cr-surface);
+  border: 1px solid var(--cr-border);
+  border-radius: 12px;
+  min-width: 160px;
+}
+
+.home-champ-year {
+  font-size: 13px;
+  font-weight: 700;
+  color: var(--cr-red);
+}
+
+.home-champ-name {
+  font-size: 15px;
+  font-weight: 700;
+}

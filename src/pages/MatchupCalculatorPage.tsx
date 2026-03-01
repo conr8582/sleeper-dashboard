@@ -1,4 +1,4 @@
-import { useMemo, useState } from "react";
+import React, { useMemo, useState } from "react";
 import { useTeams } from "../hooks/useTeams";
 import {
   LEAGUE_ID,
@@ -402,302 +402,266 @@ export function MatchupCalculatorPage() {
   if (loading) return <div>Loading teams…</div>;
   if (error) return <div style={{ color: "crimson" }}>Error: {error}</div>;
 
+  const panelStyle: React.CSSProperties = {
+    border: "1px solid var(--cr-border)",
+    borderRadius: 12,
+    padding: 20,
+    background: "var(--cr-surface)",
+    flex: "1 1 0",
+    minWidth: 0,
+  };
+
+  const selectStyle: React.CSSProperties = {
+    padding: "8px 10px",
+    borderRadius: 8,
+    border: "1px solid var(--cr-border)",
+    fontSize: 14,
+    background: "#fff",
+    color: "var(--cr-text)",
+  };
+
+  const btnStyle = (enabled: boolean): React.CSSProperties => ({
+    padding: "10px 18px",
+    borderRadius: 10,
+    border: "1px solid var(--cr-border)",
+    fontWeight: 700,
+    fontSize: 14,
+    cursor: enabled ? "pointer" : "not-allowed",
+    opacity: enabled ? 1 : 0.5,
+    background: enabled ? "var(--cr-red)" : "var(--cr-surface)",
+    color: enabled ? "#fff" : "var(--cr-text-muted)",
+  });
+
   return (
-    <div style={{ marginTop: 16 }}>
-      <h1 style={{ margin: 0 }}>Matchup Calculator</h1>
-      <p style={{ marginTop: 8 }}>
-        Compare two teams (head-to-head) or one team vs everyone (since {START_SEASON}).
+    <div>
+      <h1 style={{ margin: "0 0 6px", fontSize: 28, fontWeight: 900 }}>Matchup Calculator</h1>
+      <p style={{ margin: "0 0 24px", color: "var(--cr-text-muted)", fontSize: 15 }}>
+        Compare two teams head-to-head or one team vs everyone, since {START_SEASON}.
       </p>
 
-      {/* Head-to-head */}
-      <div
-        style={{
-          border: "1px solid #eee",
-          borderRadius: 12,
-          padding: 14,
-          marginTop: 12,
-        }}
-      >
-        <div style={{ fontWeight: 800, marginBottom: 10 }}>Head-to-head</div>
+      <div style={{ display: "flex", gap: 16, flexWrap: "wrap", alignItems: "flex-start" }}>
+        {/* Head-to-head */}
+        <div style={panelStyle}>
+          <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 14 }}>Head-to-Head</div>
 
-        <div style={{ display: "flex", gap: 12, alignItems: "flex-end", flexWrap: "wrap" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <label style={{ fontWeight: 600 }}>Team A</label>
-            <select
-              value={teamA}
-              onChange={(e) => {
-                setResult(null);
-                setCompareError(null);
-                setTeamA(e.target.value === "" ? "" : Number(e.target.value));
-              }}
-              style={{ padding: "8px 10px", borderRadius: 8 }}
-            >
-              <option value="">Select a team…</option>
-              {teamOptions.map((t) => (
-                <option key={t.rosterId} value={t.rosterId}>
-                  {t.ownerName} (Roster {t.rosterId})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <label style={{ fontWeight: 600 }}>Team B</label>
-            <select
-              value={teamB}
-              onChange={(e) => {
-                setResult(null);
-                setCompareError(null);
-                setTeamB(e.target.value === "" ? "" : Number(e.target.value));
-              }}
-              style={{ padding: "8px 10px", borderRadius: 8 }}
-            >
-              <option value="">Select a team…</option>
-              {teamOptions.map((t) => (
-                <option key={t.rosterId} value={t.rosterId}>
-                  {t.ownerName} (Roster {t.rosterId})
-                </option>
-              ))}
-            </select>
-          </div>
-
-          <button
-            onClick={handleCompare}
-            disabled={!canCompare}
-            style={{
-              padding: "10px 14px",
-              borderRadius: 10,
-              border: "1px solid #ddd",
-              fontWeight: 700,
-              cursor: canCompare ? "pointer" : "not-allowed",
-              opacity: canCompare ? 1 : 0.6,
-            }}
-          >
-            {comparing ? "Comparing…" : "Compare"}
-          </button>
-        </div>
-
-        {teamA !== "" && teamB !== "" && teamA === teamB && (
-          <p style={{ marginTop: 12, color: "crimson" }}>Pick two different teams.</p>
-        )}
-
-        {compareError && <p style={{ marginTop: 12, color: "crimson" }}>Error: {compareError}</p>}
-
-        {result && (
-          <div style={{ marginTop: 14 }}>
-            <div style={{ fontWeight: 800, marginBottom: 8 }}>
-              {teamAName} vs {teamBName}
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <label style={{ fontWeight: 600, fontSize: 13 }}>Team A</label>
+              <select
+                value={teamA}
+                onChange={(e) => {
+                  setResult(null);
+                  setCompareError(null);
+                  setTeamA(e.target.value === "" ? "" : Number(e.target.value));
+                }}
+                style={selectStyle}
+              >
+                <option value="">Select a team…</option>
+                {teamOptions.map((t) => (
+                  <option key={t.rosterId} value={t.rosterId}>
+                    {t.ownerName}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            <div style={{ opacity: 0.85, marginBottom: 10 }}>
-              Seasons scanned: {result.seasonsCovered.join(", ")} • Games found: {result.games}
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <label style={{ fontWeight: 600, fontSize: 13 }}>Team B</label>
+              <select
+                value={teamB}
+                onChange={(e) => {
+                  setResult(null);
+                  setCompareError(null);
+                  setTeamB(e.target.value === "" ? "" : Number(e.target.value));
+                }}
+                style={selectStyle}
+              >
+                <option value="">Select a team…</option>
+                {teamOptions.map((t) => (
+                  <option key={t.rosterId} value={t.rosterId}>
+                    {t.ownerName}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            <div style={{ display: "flex", gap: 18, flexWrap: "wrap" }}>
-              <div>
-                <div style={{ fontWeight: 700 }}>Record (Team A perspective)</div>
-                <div>
-                  {result.teamAWins}-{result.teamBWins}
-                  {result.ties > 0 ? `-${result.ties}` : ""}{" "}
-                  {result.ties > 0 ? "(W-L-T)" : "(W-L)"}
-                </div>
-              </div>
-
-              <div>
-                <div style={{ fontWeight: 700 }}>Total points</div>
-                <div>
-                  {teamAName}: {result.totalPointsA.toFixed(2)} • {teamBName}:{" "}
-                  {result.totalPointsB.toFixed(2)}
-                </div>
-              </div>
-
-              <div>
-                <div style={{ fontWeight: 700 }}>Point differential</div>
-                <div>
-                  Total (A−B): {result.totalDiffA.toFixed(2)} • Avg / game:{" "}
-                  {result.avgDiffA.toFixed(2)}
-                </div>
-              </div>
-            </div>
-
-            {result.bySeason.length > 0 && (
-              <div style={{ marginTop: 14 }}>
-                <div style={{ fontWeight: 800, marginBottom: 8 }}>By season</div>
-
-                <div style={{ display: "grid", gap: 8 }}>
-                  {result.bySeason.map((s) => {
-                    const avg = s.games > 0 ? s.diffA / s.games : 0;
-                    const record =
-                      s.ties > 0
-                        ? `${s.aWins}-${s.bWins}-${s.ties} (W-L-T)`
-                        : `${s.aWins}-${s.bWins} (W-L)`;
-
-                    return (
-                      <div
-                        key={s.season}
-                        style={{
-                          border: "1px solid #f0f0f0",
-                          borderRadius: 10,
-                          padding: 10,
-                          display: "flex",
-                          justifyContent: "space-between",
-                          gap: 12,
-                          flexWrap: "wrap",
-                        }}
-                      >
-                        <div style={{ minWidth: 120 }}>
-                          <div style={{ fontWeight: 800 }}>{s.season}</div>
-                          <div style={{ opacity: 0.85 }}>
-                            {s.games} game{s.games === 1 ? "" : "s"}
-                          </div>
-                        </div>
-
-                        <div style={{ minWidth: 170 }}>
-                          <div style={{ fontWeight: 700 }}>Record</div>
-                          <div>{record}</div>
-                        </div>
-
-                        <div style={{ minWidth: 220 }}>
-                          <div style={{ fontWeight: 700 }}>Points</div>
-                          <div>
-                            {teamAName}: {s.ptsA.toFixed(2)} • {teamBName}: {s.ptsB.toFixed(2)}
-                          </div>
-                        </div>
-
-                        <div style={{ minWidth: 240 }}>
-                          <div style={{ fontWeight: 700 }}>Point diff (A−B)</div>
-                          <div>
-                            Total: {s.diffA.toFixed(2)} • Avg / game: {avg.toFixed(2)}
-                          </div>
-                        </div>
-                      </div>
-                    );
-                  })}
-                </div>
-              </div>
-            )}
-
-            {result.games === 0 && (
-              <p style={{ marginTop: 10, opacity: 0.85 }}>
-                No head-to-head games found between these roster IDs since {START_SEASON}.
-              </p>
-            )}
-          </div>
-        )}
-      </div>
-
-      {/* Vs Everyone */}
-      <div
-        style={{
-          border: "1px solid #eee",
-          borderRadius: 12,
-          padding: 14,
-          marginTop: 14,
-        }}
-      >
-        <div style={{ fontWeight: 800, marginBottom: 10 }}>Team vs everyone</div>
-
-        <div style={{ display: "flex", gap: 12, alignItems: "flex-end", flexWrap: "wrap" }}>
-          <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
-            <label style={{ fontWeight: 600 }}>Team</label>
-            <select
-              value={teamAll}
-              onChange={(e) => {
-                setAllResult(null);
-                setCompareAllError(null);
-                setTeamAll(e.target.value === "" ? "" : Number(e.target.value));
-              }}
-              style={{ padding: "8px 10px", borderRadius: 8 }}
-            >
-              <option value="">Select a team…</option>
-              {teamOptions.map((t) => (
-                <option key={t.rosterId} value={t.rosterId}>
-                  {t.ownerName} (Roster {t.rosterId})
-                </option>
-              ))}
-            </select>
+            <button onClick={handleCompare} disabled={!canCompare} style={btnStyle(canCompare)}>
+              {comparing ? "Comparing…" : "Compare"}
+            </button>
           </div>
 
-          <button
-            onClick={handleCompareAll}
-            disabled={!canCompareAll}
-            style={{
-              padding: "10px 14px",
-              borderRadius: 10,
-              border: "1px solid #ddd",
-              fontWeight: 700,
-              cursor: canCompareAll ? "pointer" : "not-allowed",
-              opacity: canCompareAll ? 1 : 0.6,
-            }}
-          >
-            {comparingAll ? "Comparing…" : "Compare vs All"}
-          </button>
-        </div>
+          {teamA !== "" && teamB !== "" && teamA === teamB && (
+            <p style={{ marginTop: 12, color: "crimson", fontSize: 13 }}>
+              Pick two different teams.
+            </p>
+          )}
+          {compareError && (
+            <p style={{ marginTop: 12, color: "crimson", fontSize: 13 }}>Error: {compareError}</p>
+          )}
 
-        {compareAllError && (
-          <p style={{ marginTop: 12, color: "crimson" }}>Error: {compareAllError}</p>
-        )}
+          {result && (
+            <div style={{ marginTop: 20 }}>
+              <div style={{ fontWeight: 700, marginBottom: 6, fontSize: 15 }}>
+                {teamAName} vs {teamBName}
+              </div>
+              <div style={{ color: "var(--cr-text-muted)", fontSize: 13, marginBottom: 16 }}>
+                {result.games} total matchup{result.games !== 1 ? "s" : ""} ·{" "}
+                {result.seasonsCovered.join(", ")}
+              </div>
 
-        {allResult && (
-          <div style={{ marginTop: 14 }}>
-            <div style={{ fontWeight: 800, marginBottom: 6 }}>{teamAllName} vs everyone</div>
-            <div style={{ opacity: 0.85, marginBottom: 10 }}>
-              Seasons scanned: {allResult.seasonsCovered.join(", ")} • Opponents:{" "}
-              {allResult.rows.length}
-            </div>
-
-            <div style={{ display: "grid", gap: 8 }}>
-              {allResult.rows.map((r) => {
-                const oppName = nameForRoster(r.opponentRosterId);
-                const avg = r.games > 0 ? r.diff / r.games : 0;
-                const record =
-                  r.ties > 0
-                    ? `${r.wins}-${r.losses}-${r.ties} (W-L-T)`
-                    : `${r.wins}-${r.losses} (W-L)`;
-
-                return (
-                  <div
-                    key={r.opponentRosterId}
-                    style={{
-                      border: "1px solid #f0f0f0",
-                      borderRadius: 10,
-                      padding: 10,
-                      display: "flex",
-                      justifyContent: "space-between",
-                      gap: 12,
-                      flexWrap: "wrap",
-                    }}
-                  >
-                    <div style={{ minWidth: 220 }}>
-                      <div style={{ fontWeight: 800 }}>{oppName}</div>
-                      <div style={{ opacity: 0.85 }}>
-                        Roster {r.opponentRosterId} • {r.games} game{r.games === 1 ? "" : "s"}
-                      </div>
+              {result.games > 0 ? (
+                <div style={{ display: "flex", gap: 16, marginBottom: 16, flexWrap: "wrap" }}>
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: 36, fontWeight: 900, color: "var(--cr-red)" }}>
+                      {result.teamAWins}
                     </div>
-
-                    <div style={{ minWidth: 170 }}>
-                      <div style={{ fontWeight: 700 }}>Record</div>
-                      <div>{record}</div>
-                    </div>
-
-                    <div style={{ minWidth: 280 }}>
-                      <div style={{ fontWeight: 700 }}>Point diff (For−Against)</div>
-                      <div>
-                        Total: {r.diff.toFixed(2)} • Avg / game: {avg.toFixed(2)}
-                      </div>
+                    <div style={{ fontSize: 12, color: "var(--cr-text-muted)", fontWeight: 600 }}>
+                      {teamAName} W
                     </div>
                   </div>
-                );
-              })}
+                  <div style={{ textAlign: "center" }}>
+                    <div style={{ fontSize: 36, fontWeight: 900, color: "var(--cr-blue)" }}>
+                      {result.teamBWins}
+                    </div>
+                    <div style={{ fontSize: 12, color: "var(--cr-text-muted)", fontWeight: 600 }}>
+                      {teamBName} W
+                    </div>
+                  </div>
+                </div>
+              ) : (
+                <p style={{ color: "var(--cr-text-muted)", fontSize: 13 }}>
+                  No head-to-head games found since {START_SEASON}.
+                </p>
+              )}
+
+              {result.bySeason.length > 0 && (
+                <>
+                  <div style={{ fontWeight: 700, marginBottom: 8, fontSize: 13 }}>By season</div>
+                  <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                    {result.bySeason.map((s) => {
+                      const record =
+                        s.ties > 0
+                          ? `${s.aWins}-${s.bWins}-${s.ties}`
+                          : `${s.aWins}-${s.bWins}`;
+                      return (
+                        <div
+                          key={s.season}
+                          style={{
+                            display: "flex",
+                            justifyContent: "space-between",
+                            padding: "8px 10px",
+                            background: "#fff",
+                            border: "1px solid var(--cr-border)",
+                            borderRadius: 8,
+                            fontSize: 13,
+                          }}
+                        >
+                          <span style={{ fontWeight: 700 }}>{s.season}</span>
+                          <span style={{ color: "var(--cr-blue)", fontWeight: 600 }}>{record}</span>
+                          <span style={{ color: "var(--cr-text-muted)" }}>
+                            {s.ptsA.toFixed(0)} – {s.ptsB.toFixed(0)}
+                          </span>
+                        </div>
+                      );
+                    })}
+                  </div>
+                </>
+              )}
+            </div>
+          )}
+        </div>
+
+        {/* Vs Everyone */}
+        <div style={panelStyle}>
+          <div style={{ fontWeight: 800, fontSize: 16, marginBottom: 14 }}>Team vs Everyone</div>
+
+          <div style={{ display: "flex", flexDirection: "column", gap: 10 }}>
+            <div style={{ display: "flex", flexDirection: "column", gap: 4 }}>
+              <label style={{ fontWeight: 600, fontSize: 13 }}>Team</label>
+              <select
+                value={teamAll}
+                onChange={(e) => {
+                  setAllResult(null);
+                  setCompareAllError(null);
+                  setTeamAll(e.target.value === "" ? "" : Number(e.target.value));
+                }}
+                style={selectStyle}
+              >
+                <option value="">Select a team…</option>
+                {teamOptions.map((t) => (
+                  <option key={t.rosterId} value={t.rosterId}>
+                    {t.ownerName}
+                  </option>
+                ))}
+              </select>
             </div>
 
-            {allResult.rows.length === 0 && (
-              <p style={{ marginTop: 10, opacity: 0.85 }}>
-                No matchups found for this team since {START_SEASON}.
-              </p>
-            )}
+            <button
+              onClick={handleCompareAll}
+              disabled={!canCompareAll}
+              style={btnStyle(canCompareAll)}
+            >
+              {comparingAll ? "Comparing…" : "Compare vs All"}
+            </button>
           </div>
-        )}
+
+          {compareAllError && (
+            <p style={{ marginTop: 12, color: "crimson", fontSize: 13 }}>
+              Error: {compareAllError}
+            </p>
+          )}
+
+          {allResult && (
+            <div style={{ marginTop: 20 }}>
+              <div style={{ fontWeight: 700, marginBottom: 4, fontSize: 15 }}>
+                {teamAllName} vs everyone
+              </div>
+              <div style={{ color: "var(--cr-text-muted)", fontSize: 13, marginBottom: 14 }}>
+                {allResult.rows.length} opponents · {allResult.seasonsCovered.join(", ")}
+              </div>
+
+              <div style={{ display: "flex", flexDirection: "column", gap: 6 }}>
+                {allResult.rows.map((r) => {
+                  const oppName = nameForRoster(r.opponentRosterId);
+                  const record =
+                    r.ties > 0
+                      ? `${r.wins}-${r.losses}-${r.ties}`
+                      : `${r.wins}-${r.losses}`;
+
+                  return (
+                    <div
+                      key={r.opponentRosterId}
+                      style={{
+                        display: "flex",
+                        justifyContent: "space-between",
+                        alignItems: "center",
+                        padding: "8px 10px",
+                        background: "#fff",
+                        border: "1px solid var(--cr-border)",
+                        borderRadius: 8,
+                        fontSize: 13,
+                        gap: 8,
+                      }}
+                    >
+                      <span style={{ fontWeight: 600, flex: 1, minWidth: 0, overflow: "hidden", textOverflow: "ellipsis", whiteSpace: "nowrap" }}>
+                        {oppName}
+                      </span>
+                      <span style={{ color: "var(--cr-blue)", fontWeight: 700, flexShrink: 0 }}>
+                        {record}
+                      </span>
+                    </div>
+                  );
+                })}
+              </div>
+
+              {allResult.rows.length === 0 && (
+                <p style={{ color: "var(--cr-text-muted)", fontSize: 13 }}>
+                  No matchups found since {START_SEASON}.
+                </p>
+              )}
+            </div>
+          )}
+        </div>
       </div>
     </div>
   );
